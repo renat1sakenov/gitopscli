@@ -37,8 +37,8 @@ class RootRepo:
                 raise GitOpsException(f"Application '{app_name}' already exists in a different repository")
 
 
-def __load_tenants_from_bootstrap_values(root_repo: GitRepo) -> dict[str, AppTenantConfig]:
-    boostrap_tenant_list = __get_bootstrap_tenant_list(root_repo)
+def __load_tenants_from_bootstrap_values(root_repo: GitRepo, git_options: Optional[list[str]]) -> dict[str, AppTenantConfig]:
+    boostrap_tenant_list = __get_bootstrap_tenant_list(root_repo, git_options=git_options)
     tenants = {}
     for bootstrap_tenant in boostrap_tenant_list:
         try:
@@ -54,8 +54,8 @@ def __load_tenants_from_bootstrap_values(root_repo: GitRepo) -> dict[str, AppTen
     return tenants
 
 
-def __get_bootstrap_tenant_list(root_repo: GitRepo) -> List[Any]:
-    root_repo.clone()
+def __get_bootstrap_tenant_list(root_repo: GitRepo, git_options: Optional[list[str]]) -> List[Any]:
+    root_repo.clone(git_options=git_options)
     try:
         boostrap_values_path = root_repo.get_full_file_path("bootstrap/values.yaml")
         bootstrap_yaml = yaml_file_load(boostrap_values_path)
@@ -78,6 +78,6 @@ def __validate_bootstrap_tenants(bootstrap_entries: Optional[List[Any]]) -> None
             raise GitOpsException("Every bootstrap entry must have a 'name' property.")
 
 
-def create_root_repo(root_repo: GitRepo) -> "RootRepo":
-    root_repo_tenants = __load_tenants_from_bootstrap_values(root_repo)
+def create_root_repo(root_repo: GitRepo, git_options: Optional[list[str]]) -> "RootRepo":
+    root_repo_tenants = __load_tenants_from_bootstrap_values(root_repo, git_options=git_options)
     return RootRepo(root_repo_tenants)

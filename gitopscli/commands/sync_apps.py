@@ -18,6 +18,8 @@ class SyncAppsCommand(Command):
         git_author_name: Optional[str]
         git_author_email: Optional[str]
 
+        git_options: Optional[str]
+
         organisation: str
         repository_name: str
 
@@ -52,12 +54,15 @@ def __sync_apps(
     root_git_repo: GitRepo,
     git_user: str,
     git_email: str,
+    git_options: str,
     git_author_name: Optional[str],
     git_author_email: Optional[str],
 ) -> None:
     logging.info("Team config repository: %s", tenant_git_repo.get_clone_url())
     logging.info("Root config repository: %s", root_git_repo.get_clone_url())
-    root_repo = create_root_repo(root_repo=root_git_repo)
+
+    git_options_list = git_options.split(" ")
+    root_repo = create_root_repo(root_repo=root_git_repo, git_options=git_options_list)
     root_repo_tenant = root_repo.get_tenant_by_repo_url(tenant_git_repo.get_clone_url())
     if root_repo_tenant is None:
         raise GitOpsException("Couldn't find config file for apps repository in root repository's 'apps/' directory")
