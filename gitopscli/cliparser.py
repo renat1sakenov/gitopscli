@@ -132,6 +132,7 @@ def __create_sync_apps_parser() -> ArgumentParser:
     __add_git_org_and_repo_args(parser)
     __add_git_provider_args(parser)
     __add_verbose_arg(parser)
+    __add_git_options_args(parser)
     parser.add_argument("--root-organisation", help="Root config repository organisation", required=True)
     parser.add_argument("--root-repository-name", help="Root config repository name", required=True)
     return parser
@@ -215,13 +216,14 @@ def __add_git_credentials_args(deploy_p: ArgumentParser) -> None:
         default=os.environ.get("GITOPSCLI_PASSWORD"),
     )
 
-
 def __add_git_commit_user_args(deploy_p: ArgumentParser) -> None:
     deploy_p.add_argument("--git-user", help="Git Username", default="GitOpsCLI")
     deploy_p.add_argument("--git-email", help="Git User Email", default="gitopscli@baloise.dev")
     deploy_p.add_argument("--git-author-name", help="Git Author Name")
     deploy_p.add_argument("--git-author-email", help="Git Author Email")
 
+def __add_git_options_args(deploy_p: ArgumentParser) -> None:
+    deploy_p.add_argument("--git-options", help="additional git options", default=None)
 
 def __add_git_org_and_repo_args(deploy_p: ArgumentParser) -> None:
     deploy_p.add_argument("--organisation", help="Apps Git organisation/projectKey", required=True)
